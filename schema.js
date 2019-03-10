@@ -9,12 +9,6 @@ const {
   GraphQLNonNull
 } = require('graphql');
 
-// const customers = [
-//   { id: '1', name: 'John Doe', email: 'jdoe@gmail.com', age: 35 },
-//   { id: '2', name: 'Steve Smith', email: 'steve@gmail.com', age: 25 },
-//   { id: '3', name: 'Sara Williams', email: 'sara@gmail.com', age: 32 }
-// ];
-
 const CustomerType = new GraphQLObjectType({
   name: 'Customer',
   fields: () => ({
@@ -37,11 +31,6 @@ const RootQuery = new GraphQLObjectType({
         return axios
           .get(`http://localhost:3000/customers/${args.id}`)
           .then(res => res.data);
-        // for (let i = 0; i < customers.length; i++) {
-        //   if (customers[i].id === args.id) {
-        //     return customers[i];
-        //   }
-        // }
       }
     },
     customers: {
@@ -83,6 +72,20 @@ const mutation = new GraphQLObjectType({
       resolve(parentValue, args) {
         return axios
           .delete(`http://localhost:3000/customers/${args.id}`)
+          .then(res => res.data);
+      }
+    },
+    editCustomer: {
+      type: CustomerType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLString) },
+        name: { type: GraphQLString },
+        email: { type: GraphQLString },
+        age: { type: GraphQLInt }
+      },
+      resolve(parentValue, args) {
+        return axios
+          .patch('http://localhost:3000/customers/' + args.id, args)
           .then(res => res.data);
       }
     }
